@@ -1,0 +1,50 @@
+.tile-sort{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#tile-sort .window-content{
+    background: #00000061;
+    padding: 0;
+    color: blanchedalmond;
+}
+
+#tile-list{
+    margin:0;
+    padding:0;
+    min-width: 100%;
+}
+
+.img-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    max-width: 50px;
+    min-width: 50px;
+}
+
+.tile-sort-img{
+    height: 50px;
+    border: none;
+    border-radius: 8px;
+}
+
+.tile-sort-item{
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.37);
+}
+
+.tile-sort-item:hover{
+    background: rgba(255, 255, 255, 0.37);
+}
+
+.tile-sort-name{
+    margin-left:5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
