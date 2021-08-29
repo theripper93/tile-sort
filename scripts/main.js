@@ -46,6 +46,22 @@ class TileSort extends Application {
       );
       if (oldHighlight) oldHighlight.destroy();
     });
+    html.on("click", ".tile-sort-item", function (event) {
+      const tileId = $(this).data("tileid");
+      const tile = _this.layer.get(tileId)
+      if($(event.target).is("#hide-tile")) return
+      tile.control();
+      $(this).addClass("controlled");
+    })
+    html.on("click", "#hide-tile", function (event) {
+      const tileId = $(this).data("tileid");
+      const tile = _this.layer.get(tileId)
+      tile.release();
+      tile.tileSortHidden = !tile.visible;
+      tile.tileSortHidden = !tile.tileSortHidden;
+      tile.visible = !tile.visible;
+      $(this).toggleClass("active", !tile.visible);
+    })
     this.loadTileList();
   }
 
@@ -83,7 +99,7 @@ class TileSort extends Application {
     $("#tile-list").empty();
     let layer = this.layer.placeables
       .sort((a, b) => -a.data.z + b.data.z)
-      .filter((p) => p.visible);
+      .filter((p) => p.visible || p.tileSortHidden);
     console.log(layer);
     for (let tile of layer) {
       let $li = this.generateLi(tile);
@@ -111,8 +127,8 @@ class TileSort extends Application {
   generateLi(tile) {
     const isVideo = tile.data.img.split(".").pop() == "webm";
     const $li = $(`
-      <li class="tile-sort-item" data-tileid="${tile.id}">
-      <div class="img-container">${
+      <li class="tile-sort-item${tile._controlled ? " controlled" : ""}" data-tileid="${tile.id}">
+      <div class="img-container"><i data-tileid="${tile.id}" id="hide-tile" class="fas fa-eye-slash${tile.visible ? "":" active"}"></i>${
         isVideo ? "<video" : "<img"
       } class="tile-sort-img" autoplay loop src="${
       tile.data.img
@@ -125,6 +141,13 @@ class TileSort extends Application {
       </li>
       `);
     return $li;
+  }
+
+  updateControlled(){
+    this.element.find(".controlled").removeClass("controlled");
+    this.layer.placeables.forEach(p => {
+      if(p._controlled) this.element.find(`[data-tileid="${p.id}"]`).addClass("controlled")
+    })
   }
 
   getData() {

@@ -36,15 +36,42 @@
     align-items: center;
     padding: 5px;
     margin-bottom: 2px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.37);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.171);
+    transition: background-color 0.3s ease-in-out;
+}
+
+.tile-sort-item.controlled{
+    background: #00ff004b
 }
 
 .tile-sort-item:hover{
-    background: rgba(255, 255, 255, 0.37);
+    background: rgba(255, 255, 255, 0.123);
 }
 
 .tile-sort-name{
     margin-left:5px;
     text-overflow: ellipsis;
     overflow: hidden;
+}
+
+#hide-tile{
+    font-size: 25px;
+    position: absolute;
+    z-index: 1000;
+    text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+#hide-tile.active{
+    opacity: 0.7;
+}
+
+#hide-tile.active:hover{
+    opacity: 0.7;
+}
+
+#hide-tile:hover{
+    opacity: 0.5;
 }

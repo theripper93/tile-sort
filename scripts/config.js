@@ -39,6 +39,11 @@ Hooks.on("levelsUiChangeLevel",() => {
     if(tileSort && tileSort.rendered) tileSort.loadTileList();
 })
 
+Hooks.on("controlTile",() => {
+    const tileSort = Object.values(ui.windows).find(w => w.id === "tile-sort")
+    if(tileSort && tileSort.rendered) tileSort.updateControlled();
+})
+
 Hooks.on("renderTileSort",(app,html) => {
     html.css({
         width: 200,
