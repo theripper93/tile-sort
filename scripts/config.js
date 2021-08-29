@@ -1,5 +1,9 @@
-Hooks.once('init', async function() {
-
+Hooks.once('ready', async function() {
+    if(!game.user.isGM) return;
+    libWrapper.register("tile-sort","Tile.prototype.refresh",function refresh(wrapped,args){
+        wrapped();
+        if(this.tileSortHidden) this.visible = false
+    },"WRAPPER")
 });
 
 Hooks.on("getSceneControlButtons",(controlButtons) => {
