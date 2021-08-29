@@ -3,9 +3,6 @@ Hooks.once('init', async function() {
 });
 
 Hooks.on("getSceneControlButtons",(controlButtons) => {
-    const tileSort = Object.values(ui.windows).find(w => w.id === "tile-sort")
-    if(tileSort && tileSort.rendered) tileSort.switchLayers();
-
     controlButtons.find(b => b.name === "tiles").tools.push(
         {
             name: "tile-sort",
@@ -13,10 +10,16 @@ Hooks.on("getSceneControlButtons",(controlButtons) => {
             icon: "fas fa-sort-numeric-down-alt",
             button: true,
             onClick: () => {
-                new TileSort().render(true);
+                const tileSort = Object.values(ui.windows).find(w => w.id === "tile-sort")
+                if(!tileSort?.rendered) new TileSort().render(true);
             }
         }
     )
+}) 
+
+Hooks.on("renderSceneControls",(controlButtons) => {
+    const tileSort = Object.values(ui.windows).find(w => w.id === "tile-sort")
+    if(tileSort && tileSort.rendered) tileSort.switchLayers();
 })
 
 Hooks.on("canvasReady", () => {

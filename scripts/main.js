@@ -97,14 +97,14 @@ class TileSort extends Application {
       ? canvas.foreground
       : canvas.background;
     if (oldLayer !== this.layer.options.name) this.loadTileList();
+    this.updateHidden();
   }
 
   loadTileList() {
     $("#tile-list").empty();
-    let layer = this.layer.placeables
+    let layer = [...this.layer.placeables]
       .sort((a, b) => -a.data.z + b.data.z)
       .filter((p) => p.visible || p.tileSortHidden);
-    console.log(layer);
     for (let tile of layer) {
       let $li = this.generateLi(tile);
       $("#tile-list").append($li);
@@ -136,7 +136,7 @@ class TileSort extends Application {
       }" data-tileid="${tile.id}">
       <div class="img-container"><i data-tileid="${
         tile.id
-      }" id="hide-tile" class="fas fa-eye-slash${
+      }" id="hide-tile" class="fas fa-eye-slash hide-tile${
       tile.visible ? "" : " active"
     }"></i>${
       isVideo ? "<video" : "<img"
@@ -158,6 +158,14 @@ class TileSort extends Application {
     this.layer.placeables.forEach((p) => {
       if (p._controlled)
         this.element.find(`[data-tileid="${p.id}"]`).addClass("controlled");
+    });
+  }
+
+  updateHidden(){
+    this.element.find(".hide-tile").each((i,e)=>{
+      const tileId = $(e).data("tileid");
+      const tile = this.layer.get(tileId);
+      $(e).toggleClass("active", !tile.visible);
     });
   }
 
