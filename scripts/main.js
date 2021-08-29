@@ -23,12 +23,16 @@ class TileSort extends Application {
     Sortable.create(el, {
       animation: 150,
       onChange: function (evt) {
+        const levelsUI = Object.values(ui.windows).find(
+          (w) => w.id == "levelsUI"
+        );
+        const levelsOffset = levelsUI?.rendered ? levelsUI?.range[0] ?? 0 : 0;
         let updates = [];
         const length = _this.element.find("li").length;
         _this.element.find("li").each(function (index, element) {
           updates.push({
             _id: $(element).data("tileid"),
-            z: 100 + length - index,
+            z: length - index + levelsOffset,
           });
         });
         console.log(updates);
@@ -48,20 +52,20 @@ class TileSort extends Application {
     });
     html.on("click", ".tile-sort-item", function (event) {
       const tileId = $(this).data("tileid");
-      const tile = _this.layer.get(tileId)
-      if($(event.target).is("#hide-tile")) return
+      const tile = _this.layer.get(tileId);
+      if ($(event.target).is("#hide-tile")) return;
       tile.control();
       $(this).addClass("controlled");
-    })
+    });
     html.on("click", "#hide-tile", function (event) {
       const tileId = $(this).data("tileid");
-      const tile = _this.layer.get(tileId)
+      const tile = _this.layer.get(tileId);
       tile.release();
       tile.tileSortHidden = !tile.visible;
       tile.tileSortHidden = !tile.tileSortHidden;
       tile.visible = !tile.visible;
       $(this).toggleClass("active", !tile.visible);
-    })
+    });
     this.loadTileList();
   }
 
@@ -105,7 +109,7 @@ class TileSort extends Application {
       let $li = this.generateLi(tile);
       $("#tile-list").append($li);
     }
-    const listHeight = $("#tile-list").height() +40;
+    const listHeight = $("#tile-list").height() + 40;
     const maxH =
       $(window).height() -
       $("#tile-sort").offset().top -
@@ -127,10 +131,16 @@ class TileSort extends Application {
   generateLi(tile) {
     const isVideo = tile.data.img.split(".").pop() == "webm";
     const $li = $(`
-      <li class="tile-sort-item${tile._controlled ? " controlled" : ""}" data-tileid="${tile.id}">
-      <div class="img-container"><i data-tileid="${tile.id}" id="hide-tile" class="fas fa-eye-slash${tile.visible ? "":" active"}"></i>${
-        isVideo ? "<video" : "<img"
-      } class="tile-sort-img" autoplay loop src="${
+      <li class="tile-sort-item${
+        tile._controlled ? " controlled" : ""
+      }" data-tileid="${tile.id}">
+      <div class="img-container"><i data-tileid="${
+        tile.id
+      }" id="hide-tile" class="fas fa-eye-slash${
+      tile.visible ? "" : " active"
+    }"></i>${
+      isVideo ? "<video" : "<img"
+    } class="tile-sort-img" autoplay loop src="${
       tile.data.img
     }" alt="${tile.data.img.split("/").pop()}">${
       isVideo ? "</video>" : ""
@@ -143,14 +153,27 @@ class TileSort extends Application {
     return $li;
   }
 
-  updateControlled(){
+  updateControlled() {
     this.element.find(".controlled").removeClass("controlled");
-    this.layer.placeables.forEach(p => {
-      if(p._controlled) this.element.find(`[data-tileid="${p.id}"]`).addClass("controlled")
-    })
+    this.layer.placeables.forEach((p) => {
+      if (p._controlled)
+        this.element.find(`[data-tileid="${p.id}"]`).addClass("controlled");
+    });
   }
 
   getData() {
     return {};
+  }
+
+  close() {
+    super.close();
+    canvas.background.placeables.forEach((p) => {
+      p.tileSortHidden = false;
+      p.visible = true;
+    });
+    canvas.foreground.placeables.forEach((p) => {
+      p.tileSortHidden = false;
+      p.visible = true;
+    });
   }
 }
