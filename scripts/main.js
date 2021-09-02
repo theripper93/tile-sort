@@ -21,6 +21,8 @@ class TileSort extends Application {
     const el = html.find("#tile-list")[0];
     const _this = this;
     Sortable.create(el, {
+      multiDrag: true, // Enable the plugin
+	multiDragKey: "shift",
       animation: 150,
       onChange: function (evt) {
         const levelsUI = Object.values(ui.windows).find(
@@ -54,8 +56,14 @@ class TileSort extends Application {
       const tileId = $(this).data("tileid");
       const tile = _this.layer.get(tileId);
       if ($(event.target).is("#hide-tile")) return;
-      tile.control();
+      tile.control({releaseOthers: !event.shiftKey});
       $(this).addClass("controlled");
+    });
+    html.on("dblclick", ".tile-sort-item", function (event) {
+      debugger
+      const tileId = $(this).data("tileid");
+      const tile = _this.layer.get(tileId);
+      tile._onClickLeft2(event);
     });
     html.on("click", "#hide-tile", function (event) {
       const tileId = $(this).data("tileid");
