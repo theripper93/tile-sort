@@ -21,7 +21,7 @@ class TileSort extends Application {
     const el = html.find("#tile-list")[0];
     const _this = this;
     Sortable.create(el, {
-      multiDrag: true, // Enable the plugin
+      multiDrag: true,
 	multiDragKey: "shift",
       animation: 150,
       onChange: function (evt) {
@@ -60,7 +60,6 @@ class TileSort extends Application {
       $(this).addClass("controlled");
     });
     html.on("dblclick", ".tile-sort-item", function (event) {
-      debugger
       const tileId = $(this).data("tileid");
       const tile = _this.layer.get(tileId);
       tile._onClickLeft2(event);
@@ -137,7 +136,7 @@ class TileSort extends Application {
   }
 
   generateLi(tile) {
-    const isVideo = tile.data.img.split(".").pop() == "webm";
+    const isVideo = tile.data.img?.split(".").pop() == "webm";
     const $li = $(`
       <li class="tile-sort-item${
         tile._controlled ? " controlled" : ""
@@ -150,12 +149,11 @@ class TileSort extends Application {
       isVideo ? "<video" : "<img"
     } class="tile-sort-img" autoplay loop src="${
       tile.data.img
-    }" alt="${tile.data.img.split("/").pop()}">${
+    }" alt="${tile.data.img?.split("/").pop() ?? ""}">${
       isVideo ? "</video>" : ""
     }</div>
-      <span class="tile-sort-name" title="${tile.data.img
-        .split("/")
-        .pop()}">${tile.data.img.split("/").pop()}</span>
+      <span class="tile-sort-name" title="${tile.data.img?.split("/")
+        .pop() ?? tile.id}">${tile.data.img?.split("/").pop() ?? tile.id}</span>
       </li>
       `);
     return $li;
