@@ -57,6 +57,7 @@ class TileSort extends Application {
       const tile = _this.layer.get(tileId);
       if ($(event.target).is("#hide-tile")) return;
       tile.control({releaseOthers: !event.shiftKey});
+      if(event.ctrlKey) canvas.animatePan(tile.center)
       $(this).addClass("controlled");
     });
     html.on("dblclick", ".tile-sort-item", function (event) {
