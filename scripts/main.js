@@ -1,7 +1,7 @@
 class TileSort extends Application {
   constructor() {
     super();
-    this.layer = canvas.background;
+    this.layer = canvas.tiles;
   }
 
   static get defaultOptions() {
@@ -43,7 +43,7 @@ class TileSort extends Application {
     });
     html.on("mouseenter", ".tile-sort-item", function (event) {
       const tileId = $(this).data("tileid");
-      _this.createHighlight(_this.layer.get(tileId));
+      _this.createHighlight(canvas.tiles.get(tileId));
       $(this).addClass("selected");
     });
     html.on("mouseleave", ".tile-sort-item", function (event) {
@@ -54,7 +54,7 @@ class TileSort extends Application {
     });
     html.on("click", ".tile-sort-item", function (event) {
       const tileId = $(this).data("tileid");
-      const tile = _this.layer.get(tileId);
+      const tile = canvas.tiles.get(tileId);
       if ($(event.target).is("#hide-tile")) return;
       tile.control({releaseOthers: !event.shiftKey});
       if(event.ctrlKey) canvas.animatePan(tile.center)
@@ -62,12 +62,12 @@ class TileSort extends Application {
     });
     html.on("dblclick", ".tile-sort-item", function (event) {
       const tileId = $(this).data("tileid");
-      const tile = _this.layer.get(tileId);
+      const tile = canvas.tiles.get(tileId);
       tile._onClickLeft2(event);
     });
     html.on("click", "#hide-tile", function (event) {
       const tileId = $(this).data("tileid");
-      const tile = _this.layer.get(tileId);
+      const tile = canvas.tiles.get(tileId);
       tile.release();
       tile.tileSortHidden = !tile.visible;
       tile.tileSortHidden = !tile.tileSortHidden;
@@ -82,16 +82,13 @@ class TileSort extends Application {
       (c) => c.name == "tilesorthighlight"
     );
     if (oldHighlight) oldHighlight.destroy();
-    let tileImg = tile.tile;
+    let tileImg = tile.mesh;
     if (!tileImg || !tileImg.texture.baseTexture) return;
     let sprite = new PIXI.Sprite.from(tileImg.texture);
     sprite.isSprite = true;
-    sprite.width = tile.data.width;
-    sprite.height = tile.data.height;
+    sprite.width = tile.document.width;
+    sprite.height = tile.document.height;
     sprite.position = tile.position;
-    sprite.position.x += tileImg.x;
-    sprite.position.y += tileImg.y;
-    sprite.anchor = tileImg.anchor;
     sprite.angle = tileImg.angle;
     sprite.alpha = 0.5;
     sprite.tint = 0x00ff00;
@@ -100,18 +97,16 @@ class TileSort extends Application {
   }
 
   switchLayers() {
-    const oldLayer = this.layer.options.name;
-    this.layer = canvas.foreground._active
-      ? canvas.foreground
-      : canvas.background;
-    if (oldLayer !== this.layer.options.name) this.loadTileList();
+    const isFG = $(`li[data-tool="foreground"]`).hasClass("active");
+    this.layer = canvas.tiles.placeables.filter(t => t.document.overhead == isFG);
+    this.loadTileList();
     this.updateHidden();
   }
 
   loadTileList() {
     $("#tile-list").empty();
-    let layer = [...this.layer.placeables]
-      .sort((a, b) => -a.data.z + b.data.z)
+    let layer = [...this.layer]
+      .sort((a, b) => -a.document.z + b.document.z)
       .filter((p) => p.visible || p.tileSortHidden);
     for (let tile of layer) {
       let $li = this.generateLi(tile);
@@ -137,10 +132,10 @@ class TileSort extends Application {
   }
 
   generateLi(tile) {
-    const isVideo = tile.data.img?.split(".").pop() == "webm";
+    const isVideo = tile.document.img?.split(".").pop() == "webm";
     const $li = $(`
       <li class="tile-sort-item${
-        tile._controlled ? " controlled" : ""
+        tile.controlled ? " controlled" : ""
       }" data-tileid="${tile.id}">
       <div class="img-container"><i data-tileid="${
         tile.id
@@ -149,12 +144,12 @@ class TileSort extends Application {
     }"></i>${
       isVideo ? "<video" : "<img"
     } class="tile-sort-img" autoplay loop src="${
-      tile.data.img
-    }" alt="${tile.data.img?.split("/").pop() ?? ""}">${
+      tile.document.texture.src
+    }" alt="${tile.document.texture.src?.split("/").pop() ?? ""}">${
       isVideo ? "</video>" : ""
     }</div>
-      <span class="tile-sort-name" title="${tile.data.img?.split("/")
-        .pop() ?? tile.id}">${tile.data.img?.split("/").pop() ?? tile.id}</span>
+      <span class="tile-sort-name" title="${tile.document.texture.src?.split("/")
+        .pop() ?? tile.id}">${tile.document.texture.src?.split("/").pop() ?? tile.id}</span>
       </li>
       `);
     return $li;
@@ -162,8 +157,8 @@ class TileSort extends Application {
 
   updateControlled() {
     this.element.find(".controlled").removeClass("controlled");
-    this.layer.placeables.forEach((p) => {
-      if (p._controlled)
+    this.layer.forEach((p) => {
+      if (p.controlled)
         this.element.find(`[data-tileid="${p.id}"]`).addClass("controlled");
     });
   }
@@ -171,7 +166,7 @@ class TileSort extends Application {
   updateHidden(){
     this.element.find(".hide-tile").each((i,e)=>{
       const tileId = $(e).data("tileid");
-      const tile = this.layer.get(tileId);
+      const tile = canvas.tiles.get(tileId);
       $(e).toggleClass("active", !tile.visible);
     });
   }
@@ -182,11 +177,7 @@ class TileSort extends Application {
 
   close() {
     super.close();
-    canvas.background.placeables.forEach((p) => {
-      p.tileSortHidden = false;
-      p.visible = true;
-    });
-    canvas.foreground.placeables.forEach((p) => {
+    canvas.tiles.placeables.forEach((p) => {
       p.tileSortHidden = false;
       p.visible = true;
     });
