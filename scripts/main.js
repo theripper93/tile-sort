@@ -34,7 +34,7 @@ class TileSort extends Application {
         _this.element.find("li").each(function (index, element) {
           updates.push({
             _id: $(element).data("tileid"),
-            z: length - index + levelsOffset,
+            z: parseInt(length - index + levelsOffset),
           });
         });
         console.log(updates);
