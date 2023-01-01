@@ -43,7 +43,10 @@ Hooks.on("deleteTile",() => {
 
 Hooks.on("levelsUiChangeLevel",() => {
     const tileSort = Object.values(ui.windows).find(w => w.id === "tile-sort")
-    if(tileSort && tileSort.rendered) tileSort.loadTileList();
+    if (tileSort && tileSort.rendered) {
+        tileSort.switchLayers();
+        tileSort.loadTileList();
+    }
 })
 
 Hooks.on("controlTile",() => {

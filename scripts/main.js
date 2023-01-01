@@ -86,9 +86,12 @@ class TileSort extends Application {
     if (!tileImg || !tileImg.texture.baseTexture) return;
     let sprite = new PIXI.Sprite.from(tileImg.texture);
     sprite.isSprite = true;
-    sprite.width = tile.document.width;
-    sprite.height = tile.document.height;
+    sprite.anchor.set(tileImg.anchor.x, tileImg.anchor.y)
+    sprite.width = tile.mesh.width;
+    sprite.height = tile.mesh.height;
     sprite.position = tile.position;
+    sprite.position.x += tile.mesh.width / 2;
+    sprite.position.y += tile.mesh.height / 2;
     sprite.angle = tileImg.angle;
     sprite.alpha = 0.5;
     sprite.tint = 0x00ff00;
