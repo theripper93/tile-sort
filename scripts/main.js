@@ -84,7 +84,7 @@ class TileSort extends Application {
     if (oldHighlight) oldHighlight.destroy();
     let tileImg = tile.mesh;
     if (!tileImg || !tileImg.texture.baseTexture) return;
-    let sprite = new PIXI.Sprite.from(tileImg.texture);
+    let sprite = PIXI.Sprite.from(tileImg.texture);
     sprite.isSprite = true;
     sprite.anchor.set(tileImg.anchor.x, tileImg.anchor.y)
     sprite.width = tile.mesh.width;
