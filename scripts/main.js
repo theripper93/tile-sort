@@ -74,6 +74,7 @@ class TileSort extends Application {
       tile.visible = !tile.visible;
       $(this).toggleClass("active", !tile.visible);
     });
+    html.on("search", "input", ()=>{_this.loadTileList()});
     this.loadTileList();
   }
 
@@ -115,31 +116,21 @@ class TileSort extends Application {
       let $li = this.generateLi(tile);
       $("#tile-list").append($li);
     }
-    const listHeight = $("#tile-list").height() + 40;
-    const maxH =
-      $(window).height() -
-      $("#tile-sort").offset().top -
-      $("#tile-sort").height() -
-      20;
-    const minH = 100;
-    if (listHeight < maxH && listHeight > minH) {
-      this.element.css("height", listHeight);
-      this.position.height = listHeight;
-    } else if (listHeight > maxH) {
-      this.element.css("height", maxH);
-      this.position.height = maxH;
-    } else if (listHeight < minH) {
-      this.element.css("height", minH);
-      this.position.height = minH;
-    }
+    this.setPosition({ height: "auto" });
   }
 
   generateLi(tile) {
+    const searchTerm = (this.element.find("input").val() || "").toLowerCase();
+    let hidden = false;
+    if (searchTerm) {
+      const tileJson = JSON.stringify(tile.document.toJSON()).toLowerCase();
+      hidden = !tileJson.includes(searchTerm);
+    }
     const isVideo = tile.document.img?.split(".").pop() == "webm";
     const $li = $(`
       <li class="tile-sort-item${
         tile.controlled ? " controlled" : ""
-      }" data-tileid="${tile.id}">
+      } ${hidden ? "hidden" : ""}" data-tileid="${tile.id}">
       <div class="img-container"><i data-tileid="${
         tile.id
       }" id="hide-tile" class="fas fa-eye-slash hide-tile${

@@ -41,6 +41,10 @@
     transition: background-color 0.3s ease-in-out;
 }
 
+.tile-sort-item.hidden{
+    display: none;
+}
+
 .tile-sort-item.controlled{
     background: #00ff004b
 }
@@ -75,4 +79,10 @@
 
 #hide-tile:hover{
     opacity: 0.5;
+}
+
+#tile-sort input{
+    color: var(--color-text-light-1);
+    margin: 0.3rem;
+    max-width: calc(100% - 0.6rem);
 }
