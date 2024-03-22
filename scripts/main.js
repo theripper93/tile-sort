@@ -90,9 +90,8 @@ class TileSort extends Application {
     sprite.anchor.set(tileImg.anchor.x, tileImg.anchor.y)
     sprite.width = tile.mesh.width;
     sprite.height = tile.mesh.height;
-    sprite.position = tile.position;
-    sprite.position.x += tile.mesh.width / 2;
-    sprite.position.y += tile.mesh.height / 2;
+    sprite.scale = tile.mesh.scale;
+    sprite.position = tile.center
     sprite.angle = tileImg.angle;
     sprite.alpha = 0.5;
     sprite.tint = 0x00ff00;
