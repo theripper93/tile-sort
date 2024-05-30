@@ -101,7 +101,6 @@ class TileSort extends Application {
 
   switchLayers() {
     const isFG = $(`li[data-tool="foreground"]`).hasClass("active");
-    debugger
     const FGElevation = canvas.primary.foreground.elevation;
     this.layer = isFG ? canvas.tiles.placeables.filter(t=> t.document.elevation == FGElevation) : canvas.tiles.placeables.filter(t=> t.document.elevation != FGElevation);
     this.loadTileList();
