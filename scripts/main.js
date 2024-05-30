@@ -34,7 +34,7 @@ class TileSort extends Application {
         _this.element.find("li").each(function (index, element) {
           updates.push({
             _id: $(element).data("tileid"),
-            z: parseInt(length - index + levelsOffset),
+            sort: parseInt(length - index + levelsOffset),
           });
         });
         console.log(updates);
@@ -101,7 +101,9 @@ class TileSort extends Application {
 
   switchLayers() {
     const isFG = $(`li[data-tool="foreground"]`).hasClass("active");
-    this.layer = canvas.tiles.placeables.filter(t => t.document.overhead == isFG);
+    debugger
+    const FGElevation = canvas.primary.foreground.elevation;
+    this.layer = isFG ? canvas.tiles.placeables.filter(t=> t.document.elevation == FGElevation) : canvas.tiles.placeables.filter(t=> t.document.elevation != FGElevation);
     this.loadTileList();
     this.updateHidden();
   }
@@ -109,7 +111,7 @@ class TileSort extends Application {
   loadTileList() {
     $("#tile-list").empty();
     let layer = [...this.layer]
-      .sort((a, b) => -a.document.z + b.document.z)
+      .sort((a, b) => -a.document.sort + b.document.sort)
       .filter((p) => p.visible || p.tileSortHidden);
     for (let tile of layer) {
       let $li = this.generateLi(tile);
