@@ -1,8 +1,7 @@
 Hooks.once('ready', async function() {
     if(!game.user.isGM) return;
-    libWrapper.register("tile-sort","Tile.prototype.refresh",function refresh(wrapped,args){
-        wrapped();
-        if(this.tileSortHidden) this.visible = false
+    libWrapper.register("tile-sort", "Tile.prototype.isVisible", function refresh(wrapped, ...args) {
+        return wrapped(...args) && !this.tileSortHidden;
     },"WRAPPER")
 });
 

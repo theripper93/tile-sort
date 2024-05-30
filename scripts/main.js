@@ -69,10 +69,9 @@ class TileSort extends Application {
       const tileId = $(this).data("tileid");
       const tile = canvas.tiles.get(tileId);
       tile.release();
-      tile.tileSortHidden = !tile.visible;
       tile.tileSortHidden = !tile.tileSortHidden;
-      tile.visible = !tile.visible;
-      $(this).toggleClass("active", !tile.visible);
+      tile.refresh();
+      $(this).toggleClass("active", tile.tileSortHidden);
     });
     html.on("search", "input", ()=>{_this.loadTileList()});
     this.loadTileList();
@@ -173,7 +172,7 @@ class TileSort extends Application {
     super.close();
     canvas.tiles.placeables.forEach((p) => {
       p.tileSortHidden = false;
-      p.visible = true;
+      p.refresh();
     });
   }
 }
